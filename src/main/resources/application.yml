@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:c:\h2\dtool
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    propertities:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        dialect: org.hibernate.dialect.H2Ddialect
+      show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /console
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      enabled: true
+      file-size-threshold: 0
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    content-type: text/html
+    cache: false
+
+#server:
+#  context-path: /thymeleaf

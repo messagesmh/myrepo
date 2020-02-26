@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Result page</title>
+    <link rel="stylesheet" href="./layui/css/layui.css"  media="all">
+</head>
+<body>
+
+<div class="layui-row layui-col-space15" style="margin-left:10px;margin-top:10px;margin-right:10px;">
+    <div class="layui-col-md7">
+        <div style="padding: 20px; background-color: #F2F2F2;">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header" style="background-color:#0A9A8D;">
+                            <p style="color:#FFFFFF">message send progress</p>
+                        </div>
+                        <div class="layui-card-body">
+                            <ul class="layui-timeline" th:each="dateOrdered:${dateOrderedList}">
+                                <li class="layui-timeline-item">
+                                    <i class="layui-icon layui-timeline-axis"></i>
+                                    <div class="layui-timeline-content layui-text">
+                                        <h3 class="layui-timeline-title" th:text="${dateOrdered.date}"></h3>
+                                        <table class="layui-table">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div th:each="downstream:${dateOrdered.downstreams}">
+                                                        <p th:text="${downstream}"/>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div th:each="map:${dateOrdered.msgCountMap}">
+                                                        <p th:text="|${map.key} : ${map.value}"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md5">
+        <div style="padding: 20px; background-color: #F2F2F2;">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header" style="background-color:#0A9A8D;">
+                            <p style="color:#FFFFFF">Downstream Status</p>
+                        </div>
+                        <div class="layui-card-body">
+                            <table class="layui-table">
+                                <thead>
+                                <tr>
+                                    <td>downstream</td>
+                                    <td>file generated</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:fragment="update_status" th:each="downstream:${downstreams}">
+                                        <td th:text="${downstream.downstreamName}"></td>
+                                        <td th:text="${downstream.fileGenerated}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

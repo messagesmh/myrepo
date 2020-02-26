@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Result page</title>
+    <link rel="stylesheet" href="./layui/css/layui.css"  media="all">
+</head>
+<body>
+
+<blockquote class="layui-elem-quote" style="margin-top:10px; margin-left:10px; margin-right:10px;">All messages generated</blockquote>
+<div class="layui-row layui-col-space15" style="margin-top:10px; margin-left:10px; margin-right:10px;">
+    <div class="layui-col-md7">
+        <div style="padding: 20px; background-color: #F2F2F2;"  th:each="instrumentPayload:${instrumentPayloadList}">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header" style="background-color:#0A9A8D;">
+                            <p style="color:#FFFFFF" th:text="|Instrument ID: ${instrumentPayload.instrumentId}|"/></div>
+                        <div class="layui-card-body">
+                            <table class="layui-table">
+                                <thead>
+                                    <tr>
+                                        <th>message type</th>
+                                        <th>message date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>CUS</td>
+                                        <td th:text="${instrumentPayload.cusDate}"></td>
+                                    </tr>
+                                    <div th:each="amrDate:${instrumentPayload.amrDateList}">
+                                        <tr>
+                                            <td>AMR</td>
+                                            <td th:text="${amrDate}"></td>
+                                        </tr>
+                                    </div>
+                                    <tr>
+                                        <td>LIQ</td>
+                                        <td th:text="${instrumentPayload.liqDate}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form class="layui-form" action="#" th:action="@{/send}" method="POST">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn">start</button>
+        </div>
+    </div>
+</form>
+
+
+</body>
+</html>

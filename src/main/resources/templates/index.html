@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Show Demo Tool - File Upload</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./layui/css/layui.css"  media="all">
+</head>
+<body>
+
+
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">Step 1: upload message file(s) (xml format)</div>
+                <div class="layui-card-body">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-normal" id="testList">open file</button>
+                        <div class="layui-upload-list">
+                            <table class="layui-table">
+                                <thead>
+                                <tr><th>file name</th>
+                                    <th>file size</th>
+                                    <th>file status</th>
+                                    <th>operation</th>
+                                </tr></thead>
+                                <tbody id="demoList"></tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="layui-btn" id="testListAction">upload file</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">Step 2: choose downstream</div>
+                <div class="layui-card-body">
+                    <div class="layui-upload">
+                        <form class="layui-form" action="#" th:action="@{/generate}" th:object="${msgpayload}" method="POST" enctype="multipart/form-data">
+                            <div class="layui-form-item" pane="">
+                                <label class="layui-form-label">Downstream</label>
+                                <div class="layui-input-block">
+                                    <input type="checkbox" lay-skin="primary" title="CLS" th:field="*{cbCls}">
+                                    <input type="checkbox" lay-skin="primary" title="FTP" th:field="*{cbFtp}">
+                                    <input type="checkbox" lay-skin="primary" title="QRM" th:field="*{cbQrm}">
+                                    <input type="checkbox" lay-skin="primary" title="REMIND" th:field="*{cbRemind}">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="submit" class="layui-btn" lay-submit="">next step</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="./layui/layui.js" charset="utf-8"></script>
+<script>
+
+
+layui.use('upload', function(){
+
+  var $ = layui.jquery
+  ,upload = layui.upload;
+
+  // upload file
+  var demoListView = $('#demoList')
+  ,uploadListIns = upload.render({
+    elem: '#testList'
+    ,url: '/upload'
+    ,accept: 'file'
+    ,exts: 'xml'
+    ,multiple: true
+    ,auto: false
+    ,bindAction: '#testListAction'
+    ,choose: function(obj){
+      var files = this.files = obj.pushFile(); //add file
+      //read file
+      obj.preview(function(index, file, result){
+        var tr = $(['<tr id="upload-'+ index +'">'
+          ,'<td>'+ file.name +'</td>'
+          ,'<td>'+ (file.size/1024).toFixed(1) +'kb</td>'
+          ,'<td>waiting to be uploaded</td>'
+          ,'<td>'
+            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">reopen</button>'
+            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">delete</button>'
+          ,'</td>'
+        ,'</tr>'].join(''));
+
+        //upload
+        tr.find('.demo-reload').on('click', function(){
+          obj.upload(index, file);
+        });
+
+        //delete
+        tr.find('.demo-delete').on('click', function(){
+          delete files[index]; //delete file
+          tr.remove();
+          uploadListIns.config.elem.next()[0].value = ''; //clear input file to avoid unselect cause file name duplicate
+        });
+
+        demoListView.append(tr);
+      });
+    }
+    ,done: function(res, index, upload){
+      if(res.code==0){ //upload success
+        var tr = demoListView.find('tr#upload-'+ index)
+        ,tds = tr.children();
+        tds.eq(2).html('<span style="color: #5FB878;">upload success</span>');
+        tds.eq(3).html(''); //clear operation
+        return delete this.files[index]; //delete file uploaded
+      }
+      this.error(index, upload);
+    }
+    ,error: function(index, upload){
+      var tr = demoListView.find('tr#upload-'+ index)
+      ,tds = tr.children();
+      tds.eq(2).html('<span style="color: #FF5722;">upload failed</span>');
+      tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //display upload button
+    }
+  });
+
+
+});
+
+
+layui.use('form', function(){
+  var form = layui.form;
+  form.render();
+});
+
+
+</script>
+
+</body>
+</html>
